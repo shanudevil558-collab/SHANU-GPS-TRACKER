@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.log
+.env
+.venv/
+venv/
+*.backup
+*.bak
+app_v1_backup.py
+menu.sh.backup
+menu_fixed.backup.sh
+*_backup.*

